@@ -14,3 +14,7 @@ jobs:
       - name: Run bridge smoke test
         shell: powershell
         run: powershell -NoProfile -ExecutionPolicy Bypass -File .\tests\bridge-smoke.ps1
+
+      - name: Run runtime cleanup test
+        shell: powershell
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File .\tests\clear-runtime.ps1

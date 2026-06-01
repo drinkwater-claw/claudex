@@ -264,6 +264,20 @@ Get-CimInstance Win32_Process |
   Select-Object ProcessId,CommandLine
 ```
 
+清理 30 天前的运行态文件：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File C:\ai-bridge\bin\Clear-ClaudeBridgeRuntime.ps1
+```
+
+只预览将会清理什么：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File C:\ai-bridge\bin\Clear-ClaudeBridgeRuntime.ps1 -WhatIf
+```
+
+默认只清理 `tmp`、`logs`、`outbox`、`archive` 中超过保留期的文件，不会清理 `bin`、`docs`、`schemas`、`examples`，也不会清理正在流转的 `inbox`、`working`、`locks`。
+
 ---
 
 ## 测试
@@ -446,6 +460,35 @@ powershell -NoProfile -ExecutionPolicy Bypass -File C:\ai-bridge\bin\Invoke-Clau
 ```
 
 If result JSON appears in `C:\ai-bridge\outbox`, the bridge is connected.
+
+## Disk Usage And Cleanup
+
+The fixed runtime files are small. The directories that can grow over time are:
+
+- `tmp`: temporary markdown responses.
+- `logs`: daemon, invoke, and approval logs.
+- `outbox`: Claude result JSON files.
+- `archive`: completed task JSON files.
+
+Clean files older than 30 days:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File C:\ai-bridge\bin\Clear-ClaudeBridgeRuntime.ps1
+```
+
+Preview cleanup without deleting:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File C:\ai-bridge\bin\Clear-ClaudeBridgeRuntime.ps1 -WhatIf
+```
+
+Use a custom retention period:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File C:\ai-bridge\bin\Clear-ClaudeBridgeRuntime.ps1 -RetentionDays 7
+```
+
+By default the cleanup script only touches `tmp`, `logs`, `outbox`, and `archive`. It does not delete runtime scripts, docs, schemas, examples, pending tasks, active tasks, or lock files.
 
 ## License
 

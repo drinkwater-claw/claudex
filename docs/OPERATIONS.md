@@ -26,6 +26,35 @@ Get-CimInstance Win32_Process |
 - Per-task invoke log: `C:\ai-bridge\logs\invoke-<task-id>.log`
 - Approval watcher log: `C:\ai-bridge\logs\claude-approval-<task-id>.log`
 
+## Disk Cleanup
+
+By default, cleanup removes files older than 30 days from runtime data directories only:
+
+- `tmp`
+- `logs`
+- `outbox`
+- `archive`
+
+It does not touch `bin`, `docs`, `schemas`, `examples`, `inbox`, `working`, or `locks`.
+
+Run cleanup:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File C:\ai-bridge\bin\Clear-ClaudeBridgeRuntime.ps1
+```
+
+Preview cleanup:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File C:\ai-bridge\bin\Clear-ClaudeBridgeRuntime.ps1 -WhatIf
+```
+
+Use a shorter retention period:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File C:\ai-bridge\bin\Clear-ClaudeBridgeRuntime.ps1 -RetentionDays 7
+```
+
 ## Stop The Daemon
 
 ```powershell

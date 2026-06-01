@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.1
+
+- Added `Clear-ClaudeBridgeRuntime.ps1` for retention-based cleanup of `tmp`, `logs`, `outbox`, and `archive`.
+- Added cleanup test coverage.
+- Documented disk usage and cleanup operations.
+
 ## 0.1.0
 
 - Initial public release.
