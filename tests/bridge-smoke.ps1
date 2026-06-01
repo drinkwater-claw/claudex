@@ -27,7 +27,7 @@ try {
 
     $createdJson = & (Join-Path $binRoot "New-AIBridgeTask.ps1") `
         -BridgeRoot $bridgeRoot `
-        -Prompt "Smoke test task." `
+        -Prompt "Smoke test task with UTF-8 text: 中文优先, StepDock, DeepSeek, npm run build." `
         -ContextFiles @($PSCommandPath) `
         -OutputFormat "markdown"
 
@@ -41,6 +41,7 @@ try {
     $claimed = (& (Join-Path $binRoot "Get-AIBridgeNextTask.ps1") -BridgeRoot $bridgeRoot | ConvertFrom-Json)
     Assert-True ($claimed.status -eq "claimed") "Expected a claimed task."
     Assert-True ($claimed.id -eq $created.id) "Expected claimed id to match created id."
+    Assert-True ($claimed.task.prompt -like "*中文优先*") "Expected UTF-8 task text to survive claim."
 
     $responseFile = Join-Path $bridgeRoot "tmp\$($created.id).response.md"
     "Claudex smoke result." | Set-Content -LiteralPath $responseFile -Encoding UTF8

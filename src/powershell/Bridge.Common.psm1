@@ -99,7 +99,8 @@ function Read-AIBridgeJson {
         [string] $Path
     )
 
-    return (Get-Content -Raw -LiteralPath $Path | ConvertFrom-Json)
+    $json = [System.IO.File]::ReadAllText($Path, [System.Text.Encoding]::UTF8)
+    return ($json | ConvertFrom-Json)
 }
 
 function Get-AIBridgeTaskFileName {

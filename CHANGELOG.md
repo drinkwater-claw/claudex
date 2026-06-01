@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.4
+
+- Fixed UTF-8 JSON reading on Windows PowerShell 5.1 so Chinese and other non-ASCII task prompts validate and can be claimed reliably.
+- Added smoke-test coverage for UTF-8 task prompt text.
+
 ## 0.1.3
 
 - Added `docs/COLLABORATION_PLAYBOOK.md` with bilingual Codex/Claude worker coordination guidance.
