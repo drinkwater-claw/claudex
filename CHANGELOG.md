@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.2
+
+- Added bilingual 5-minute quick start documentation.
+- Added bilingual common blockers and troubleshooting guidance.
+- Documented release asset expectations for source archives and convenience bundles.
+- Published a downloadable release bundle for easier installation.
+
 ## 0.1.1
 
 - Added `Clear-ClaudeBridgeRuntime.ps1` for retention-based cleanup of `tmp`, `logs`, `outbox`, and `archive`.

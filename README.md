@@ -15,6 +15,47 @@ Claude 负责领取任务、执行任务、写回结构化结果
 
 ---
 
+## 5 分钟快速开始
+
+这是一条最短可用路径，适合已经在 Windows 上安装并登录 Claude Desktop/Cowork，同时可以使用 Codex 的电脑。
+
+1. 克隆仓库：
+
+```powershell
+git clone https://github.com/drinkwater-claw/claudex.git
+cd claudex
+```
+
+2. 安装 GUI 自动化依赖：
+
+```powershell
+python -m pip install --user --upgrade pywinauto
+```
+
+3. 安装桥接运行目录，并注册/启动后台 daemon：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1 -BridgeRoot C:\ai-bridge -InstallDaemon -StartDaemon
+```
+
+4. 在 Claude Desktop/Cowork 中打开或粘贴 worker prompt：
+
+```text
+C:\ai-bridge\docs\CLAUDE_WORKER_PROMPT.md
+```
+
+5. 从 Codex 或 PowerShell 发一个端到端测试任务：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File C:\ai-bridge\bin\Invoke-ClaudeBridgeTask.ps1 `
+  -Prompt "Return markdown saying Claudex is connected." `
+  -TimeoutSeconds 300
+```
+
+如果 `C:\ai-bridge\outbox` 中出现 result JSON，并且命令返回 `validation_valid: true`，说明本地桥接已经连通。之后让 Codex 使用 `C:\ai-bridge\bin\Invoke-ClaudeBridgeTask.ps1` 派发任务即可；Claude 的输出仍然必须由 Codex 审查后才能作为最终结果。
+
+---
+
 ## 这个项目实现了什么
 
 Claudex 在本地创建一个默认目录 `C:\ai-bridge`，作为 Codex 和 Claude 之间的文件桥。
@@ -280,6 +321,33 @@ powershell -NoProfile -ExecutionPolicy Bypass -File C:\ai-bridge\bin\Clear-Claud
 
 ---
 
+## 常见卡点
+
+| 现象 | 常见原因 | 处理方式 |
+| --- | --- | --- |
+| Claude 没有响应 | Claude Desktop 没打开、未登录，或 Cowork 会话不可用 | 打开 Claude Desktop，确认账号已登录，并让 Cowork 窗口处于可接收消息的状态 |
+| 任务堆在 `inbox` | daemon 没运行，或 Claude 窗口唤醒失败 | 运行“常用命令”里的 daemon 检查命令；必要时重新执行安装命令并带上 `-StartDaemon` |
+| PowerShell 拒绝运行脚本 | 当前 shell 的执行策略阻止脚本 | 使用命令里的 `-ExecutionPolicy Bypass`，或临时运行 `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass` |
+| C 盘空间担心持续增长 | `logs`、`tmp`、`outbox`、`archive` 会积累运行态文件 | 使用 `C:\ai-bridge\bin\Clear-ClaudeBridgeRuntime.ps1 -WhatIf` 先预览，再按保留期清理 |
+| Claude 提示需要授权 | Claude/Cowork 对外部自动化命令有确认步骤 | 让 Claude 信任本地桥接命令；approval watcher 只是便利层，不是安全边界 |
+| 找不到 Claude/Cowork 窗口 | 窗口标题变化、最小化、在另一个桌面，或 Claude 更新了 UI | 先手动打开目标窗口；如果仍失败，查看 `C:\ai-bridge\logs` 并更新窗口标题参数 |
+| 结果 JSON 校验失败 | Claude 返回格式不符合 schema，或响应被截断 | 用 `Test-AIBridgePayload.ps1 -Kind result` 校验，Codex 应重新派发更小、更明确的修正任务 |
+
+更多运维命令见 [Operations](docs/OPERATIONS.md)。
+
+---
+
+## 发布资源
+
+GitHub release 页面始终会提供 GitHub 自动生成的源码归档。新版本也会尽量附带一个便捷包，例如 `claudex-v0.1.2.zip`。
+
+- 源码归档适合审计、二次开发和从源码安装。
+- 便捷包适合直接下载、解压、运行 `install.ps1`。
+- 便捷包不包含账号凭据、Claude 登录状态、Codex 配置或任何本机私有任务记录。
+- 发布资产是社区构建，未做代码签名；高安全环境应自行校验哈希并审查源码。
+
+---
+
 ## 测试
 
 运行 smoke test：
@@ -314,6 +382,45 @@ Claude claims scoped tasks, executes them, and writes structured results back.
 ```
 
 > Claudex is not a Claude API, not an official OpenAI product, and not an official Anthropic product. It is a pragmatic local automation bridge for developers who run Codex and Claude Desktop on the same Windows machine.
+
+## 5-Minute Quick Start
+
+This is the shortest useful path for a Windows machine that already has Codex access plus Claude Desktop/Cowork installed and signed in.
+
+1. Clone the repository:
+
+```powershell
+git clone https://github.com/drinkwater-claw/claudex.git
+cd claudex
+```
+
+2. Install the GUI automation dependency:
+
+```powershell
+python -m pip install --user --upgrade pywinauto
+```
+
+3. Install the bridge runtime and register/start the background daemon:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1 -BridgeRoot C:\ai-bridge -InstallDaemon -StartDaemon
+```
+
+4. In Claude Desktop/Cowork, open or paste the worker prompt:
+
+```text
+C:\ai-bridge\docs\CLAUDE_WORKER_PROMPT.md
+```
+
+5. Send an end-to-end test task from Codex or PowerShell:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File C:\ai-bridge\bin\Invoke-ClaudeBridgeTask.ps1 `
+  -Prompt "Return markdown saying Claudex is connected." `
+  -TimeoutSeconds 300
+```
+
+If a result JSON appears in `C:\ai-bridge\outbox` and the command returns `validation_valid: true`, the local bridge is connected. From there, tell Codex to use `C:\ai-bridge\bin\Invoke-ClaudeBridgeTask.ps1` for delegated tasks. Claude output is still not final until Codex reviews it.
 
 ## What This Project Implements
 
@@ -489,6 +596,29 @@ powershell -NoProfile -ExecutionPolicy Bypass -File C:\ai-bridge\bin\Clear-Claud
 ```
 
 By default the cleanup script only touches `tmp`, `logs`, `outbox`, and `archive`. It does not delete runtime scripts, docs, schemas, examples, pending tasks, active tasks, or lock files.
+
+## Common Blockers
+
+| Symptom | Common cause | What to do |
+| --- | --- | --- |
+| Claude does not respond | Claude Desktop is closed, signed out, or Cowork is unavailable | Open Claude Desktop, confirm it is signed in, and keep Cowork ready to receive messages |
+| Tasks pile up in `inbox` | The daemon is not running, or Claude wake-up failed | Run the daemon health command under Common Commands; reinstall with `-StartDaemon` if needed |
+| PowerShell blocks scripts | The current execution policy blocks local scripts | Use the documented `-ExecutionPolicy Bypass` commands, or run `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass` for the current shell |
+| C drive usage keeps growing | `logs`, `tmp`, `outbox`, and `archive` accumulate runtime files | Preview cleanup with `C:\ai-bridge\bin\Clear-ClaudeBridgeRuntime.ps1 -WhatIf`, then clean by retention period |
+| Claude asks for approval | Claude/Cowork requires confirmation for external automation commands | Allow the local bridge command when appropriate; the approval watcher is a convenience layer, not a security boundary |
+| Claude/Cowork window is not found | Window title changed, the app is minimized, it is on another desktop, or Claude updated its UI | Open the target window manually, then inspect `C:\ai-bridge\logs` and update the window-title parameter if needed |
+| Result JSON fails validation | Claude returned schema-invalid output, or the response was truncated | Validate with `Test-AIBridgePayload.ps1 -Kind result`; Codex should send a smaller, clearer follow-up task |
+
+See [Operations](docs/OPERATIONS.md) for more operational commands.
+
+## Release Assets
+
+GitHub release pages always include GitHub-generated source archives. New releases will also try to include a convenience bundle such as `claudex-v0.1.2.zip`.
+
+- Source archives are best for auditing, development, and source-based installation.
+- The convenience bundle is best for downloading, extracting, and running `install.ps1`.
+- The bundle does not include account credentials, Claude sign-in state, Codex configuration, or private local task history.
+- Release assets are unsigned community builds; security-sensitive environments should verify hashes and review the source.
 
 ## License
 
