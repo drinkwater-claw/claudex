@@ -54,6 +54,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File C:\ai-bridge\bin\Invoke-Clau
 
 如果 `C:\ai-bridge\outbox` 中出现 result JSON，并且命令返回 `validation_valid: true`，说明本地桥接已经连通。之后让 Codex 使用 `C:\ai-bridge\bin\Invoke-ClaudeBridgeTask.ps1` 派发任务即可；Claude 的输出仍然必须由 Codex 审查后才能作为最终结果。
 
+想用 CC Switch + DeepSeek V4 作为 Claude Desktop worker 后端，并尽量节省 Codex 额度，请继续阅读 [Collaboration Playbook](docs/COLLABORATION_PLAYBOOK.md)。
+
 ---
 
 ## 这个项目实现了什么
@@ -364,6 +366,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tests\bridge-smoke.ps1
 
 - [Architecture](docs/ARCHITECTURE.md)
 - [Operations](docs/OPERATIONS.md)
+- [Collaboration Playbook](docs/COLLABORATION_PLAYBOOK.md)
 - [Codex Master Policy](docs/CODEX_MASTER_POLICY.md)
 - [Claude Worker Prompt](docs/CLAUDE_WORKER_PROMPT.md)
 - [Security](SECURITY.md)
@@ -421,6 +424,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File C:\ai-bridge\bin\Invoke-Clau
 ```
 
 If a result JSON appears in `C:\ai-bridge\outbox` and the command returns `validation_valid: true`, the local bridge is connected. From there, tell Codex to use `C:\ai-bridge\bin\Invoke-ClaudeBridgeTask.ps1` for delegated tasks. Claude output is still not final until Codex reviews it.
+
+If you want to use CC Switch + DeepSeek V4 as the Claude Desktop worker backend while saving Codex quota, read the [Collaboration Playbook](docs/COLLABORATION_PLAYBOOK.md).
 
 ## What This Project Implements
 

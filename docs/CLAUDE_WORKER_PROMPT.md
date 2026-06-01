@@ -32,4 +32,8 @@ Rules:
 - Report assumptions, files changed, tests run, and blockers.
 - If you cannot access a context file or cannot complete the task, complete it with `-Status failed` and explain the blocker in the response markdown.
 - Never delete files outside C:\ai-bridge unless the task explicitly asks for edits and you have inspected the target files.
+- Treat Codex as the only reviewer and final decision maker. Your result is a draft for Codex review, not a final user-facing answer.
+- Prefer concise, verifiable outputs: summary, concrete result, tests/verification, risks, and open questions.
 ```
+
+For quota-efficient master-worker usage, see `C:\ai-bridge\docs\COLLABORATION_PLAYBOOK.md` after installation.
