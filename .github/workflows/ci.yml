@@ -1,0 +1,16 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  smoke:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run bridge smoke test
+        shell: powershell
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File .\tests\bridge-smoke.ps1

@@ -1,0 +1,27 @@
+# Runtime state
+archive/
+inbox/
+working/
+outbox/
+locks/
+logs/
+tmp/
+bridge.manifest.json
+
+# Local installs
+.env
+.env.*
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# PowerShell
+*.ps1xml
+*.pssc
+*.psrc
+
+# Test scratch
+*.log

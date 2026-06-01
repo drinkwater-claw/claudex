@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.ai-bridge/schemas/task.schema.json",
+  "title": "AI Bridge Task",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "type",
+    "id",
+    "status",
+    "created_at",
+    "requester",
+    "assignee",
+    "prompt",
+    "context_files",
+    "output_format"
+  ],
+  "properties": {
+    "schema_version": { "type": "string", "const": "1.0" },
+    "type": { "type": "string", "const": "task" },
+    "id": { "type": "string", "pattern": "^task-[0-9]{8}-[0-9]{6}-[0-9a-f]{8}$" },
+    "status": { "type": "string", "enum": ["pending", "working", "completed"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "claimed_at": { "type": "string", "format": "date-time" },
+    "completed_at": { "type": "string", "format": "date-time" },
+    "requester": { "type": "string" },
+    "assignee": { "type": "string" },
+    "role": { "type": "string" },
+    "prompt": { "type": "string", "minLength": 1 },
+    "context_files": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "requirements": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "output_format": { "type": "string" },
+    "parent_id": {
+      "anyOf": [
+        { "type": "string" },
+        { "type": "null" }
+      ]
+    },
+    "metadata": { "type": "object" }
+  },
+  "additionalProperties": true
+}

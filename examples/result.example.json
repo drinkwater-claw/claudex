@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0",
+  "type": "result",
+  "id": "task-20260531-100000-1234abcd",
+  "task_id": "task-20260531-100000-1234abcd",
+  "status": "succeeded",
+  "created_at": "2026-05-31T14:01:00.0000000+00:00",
+  "completed_at": "2026-05-31T14:01:00.0000000+00:00",
+  "worker": "claude",
+  "summary": "Reviewed auth flow.",
+  "response_markdown": "No high severity findings were identified.",
+  "files_changed": [],
+  "diagnostics": [],
+  "metadata": {
+    "bridge_root": "C:\\ai-bridge"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.ai-bridge/schemas/result.schema.json",
+  "title": "AI Bridge Result",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "type",
+    "id",
+    "task_id",
+    "status",
+    "completed_at",
+    "worker",
+    "summary",
+    "response_markdown"
+  ],
+  "properties": {
+    "schema_version": { "type": "string", "const": "1.0" },
+    "type": { "type": "string", "const": "result" },
+    "id": { "type": "string" },
+    "task_id": { "type": "string" },
+    "status": { "type": "string", "enum": ["succeeded", "failed", "partial"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "completed_at": { "type": "string", "format": "date-time" },
+    "worker": { "type": "string" },
+    "summary": { "type": "string" },
+    "response_markdown": { "type": "string" },
+    "files_changed": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": { "type": "object" }
+    },
+    "metadata": { "type": "object" }
+  },
+  "additionalProperties": true
+}
