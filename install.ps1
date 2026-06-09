@@ -4,7 +4,8 @@ param(
     [switch] $InstallDaemon,
     [switch] $StartDaemon,
     [int] $PollSeconds = 10,
-    [int] $TaskTimeoutSeconds = 900
+    [int] $TaskTimeoutSeconds = 900,
+    [int] $WatchdogMinutes = 5
 )
 
 $ErrorActionPreference = "Stop"
@@ -33,16 +34,17 @@ Copy-Item -Force (Join-Path $ProjectRoot "README.md") (Join-Path $BridgeRoot "RE
 
 $daemon = $null
 if ($InstallDaemon) {
-    $args = @(
-        "-BridgeRoot", $BridgeRoot,
-        "-PollSeconds", $PollSeconds,
-        "-TaskTimeoutSeconds", $TaskTimeoutSeconds
-    )
+    $daemonParams = @{
+        BridgeRoot = $BridgeRoot
+        PollSeconds = $PollSeconds
+        TaskTimeoutSeconds = $TaskTimeoutSeconds
+        WatchdogMinutes = $WatchdogMinutes
+    }
     if ($StartDaemon) {
-        $args += "-StartNow"
+        $daemonParams.StartNow = $true
     }
 
-    $daemon = (& (Join-Path $RuntimeBin "Install-ClaudeBridgeDaemon.ps1") @args | ConvertFrom-Json)
+    $daemon = (& (Join-Path $RuntimeBin "Install-ClaudeBridgeDaemon.ps1") @daemonParams | ConvertFrom-Json)
 }
 
 [ordered]@{

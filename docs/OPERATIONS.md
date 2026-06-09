@@ -8,6 +8,16 @@ Get-CimInstance Win32_Process |
   Select-Object ProcessId,CommandLine
 ```
 
+## Run Watchdog Once
+
+Use this when the scheduled task is present but the daemon process is missing.
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File C:\ai-bridge\bin\Ensure-ClaudeBridgeDaemon.ps1 -BridgeRoot C:\ai-bridge
+```
+
+The installer registers the scheduled task as a short watchdog run, not as the long-lived daemon process itself. The watchdog starts the daemon in a hidden background PowerShell process if it is missing.
+
 ## Check Queue Health
 
 ```powershell
@@ -23,6 +33,7 @@ Get-CimInstance Win32_Process |
 ## Logs
 
 - Daemon log: `C:\ai-bridge\logs\claude-bridge-daemon.log`
+- Watchdog log: `C:\ai-bridge\logs\claude-bridge-watchdog.log`
 - Per-task invoke log: `C:\ai-bridge\logs\invoke-<task-id>.log`
 - Approval watcher log: `C:\ai-bridge\logs\claude-approval-<task-id>.log`
 

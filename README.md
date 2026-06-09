@@ -70,7 +70,7 @@ Claudex 在本地创建一个默认目录 `C:\ai-bridge`，作为 Codex 和 Clau
 - **结果回写**：Claude 把结果写成 JSON 文件，放入 `outbox`。
 - **结构校验**：Codex 使用脚本校验 Claude 返回的 result JSON 是否符合协议。
 - **主从协作**：Codex 永远是项目主导，Claude 只是 scoped execution worker。
-- **持续运行**：Windows 登录后可自动启动 daemon，持续轮询任务。
+- **持续运行**：Windows 登录后可自动启动 daemon，并由轻量 watchdog 定期恢复意外退出的 daemon。
 - **授权辅助**：提供一个受限 GUI watcher，辅助处理 Claude 对桥接命令的授权提示。
 
 整体链路如下：
@@ -105,7 +105,7 @@ Claudex 能做：
 - 让 Codex 自动派发任务给 Claude。
 - 让 Claude 自动读取任务、执行并回写结果。
 - 让 Codex 自动检查结果格式，并把 Claude 输出纳入自己的审查流程。
-- 支持长期本地 daemon，减少人工提醒。
+- 支持长期本地 daemon 和 watchdog 自恢复，减少人工提醒。
 - 适合作为 AI 协作开发中的“副手执行层”。
 
 Claudex 不能做：
@@ -307,6 +307,12 @@ Get-CimInstance Win32_Process |
   Select-Object ProcessId,CommandLine
 ```
 
+手动执行一次 watchdog 自恢复检查：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File C:\ai-bridge\bin\Ensure-ClaudeBridgeDaemon.ps1 -BridgeRoot C:\ai-bridge
+```
+
 清理 30 天前的运行态文件：
 
 ```powershell
@@ -328,7 +334,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File C:\ai-bridge\bin\Clear-Claud
 | 现象 | 常见原因 | 处理方式 |
 | --- | --- | --- |
 | Claude 没有响应 | Claude Desktop 没打开、未登录，或 Cowork 会话不可用 | 打开 Claude Desktop，确认账号已登录，并让 Cowork 窗口处于可接收消息的状态 |
-| 任务堆在 `inbox` | daemon 没运行，或 Claude 窗口唤醒失败 | 运行“常用命令”里的 daemon 检查命令；必要时重新执行安装命令并带上 `-StartDaemon` |
+| 任务堆在 `inbox` | daemon 没运行，watchdog 未恢复，或 Claude 窗口唤醒失败 | 运行“常用命令”里的 daemon 和 watchdog 检查命令；必要时重新执行安装命令并带上 `-InstallDaemon -StartDaemon` |
 | PowerShell 拒绝运行脚本 | 当前 shell 的执行策略阻止脚本 | 使用命令里的 `-ExecutionPolicy Bypass`，或临时运行 `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass` |
 | C 盘空间担心持续增长 | `logs`、`tmp`、`outbox`、`archive` 会积累运行态文件 | 使用 `C:\ai-bridge\bin\Clear-ClaudeBridgeRuntime.ps1 -WhatIf` 先预览，再按保留期清理 |
 | Claude 提示需要授权 | Claude/Cowork 对外部自动化命令有确认步骤 | 让 Claude 信任本地桥接命令；approval watcher 只是便利层，不是安全边界 |
@@ -439,7 +445,7 @@ It provides:
 - **Result writing**: Claude writes structured result JSON into `outbox`.
 - **Payload validation**: Codex validates result JSON before reviewing it.
 - **Master-worker workflow**: Codex remains the lead; Claude only executes scoped work.
-- **Long-running daemon**: a Windows logon task can keep the bridge running.
+- **Long-running daemon**: a Windows logon task and lightweight watchdog can keep the bridge running and restore it if it exits.
 - **Approval helper**: a limited GUI watcher can help with bridge-related Claude command prompts.
 
 ## Capability Boundaries
@@ -450,7 +456,7 @@ Claudex can:
 - Let Codex delegate scoped tasks to Claude.
 - Let Claude read tasks, execute them, and write results.
 - Let Codex validate and review Claude output.
-- Run as a local daemon for long-lived workflows.
+- Run as a local daemon with watchdog self-recovery for long-lived workflows.
 
 Claudex cannot:
 
@@ -607,7 +613,7 @@ By default the cleanup script only touches `tmp`, `logs`, `outbox`, and `archive
 | Symptom | Common cause | What to do |
 | --- | --- | --- |
 | Claude does not respond | Claude Desktop is closed, signed out, or Cowork is unavailable | Open Claude Desktop, confirm it is signed in, and keep Cowork ready to receive messages |
-| Tasks pile up in `inbox` | The daemon is not running, or Claude wake-up failed | Run the daemon health command under Common Commands; reinstall with `-StartDaemon` if needed |
+| Tasks pile up in `inbox` | The daemon is not running, the watchdog did not recover it, or Claude wake-up failed | Run the daemon and watchdog health commands under Common Commands; reinstall with `-InstallDaemon -StartDaemon` if needed |
 | PowerShell blocks scripts | The current execution policy blocks local scripts | Use the documented `-ExecutionPolicy Bypass` commands, or run `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass` for the current shell |
 | C drive usage keeps growing | `logs`, `tmp`, `outbox`, and `archive` accumulate runtime files | Preview cleanup with `C:\ai-bridge\bin\Clear-ClaudeBridgeRuntime.ps1 -WhatIf`, then clean by retention period |
 | Claude asks for approval | Claude/Cowork requires confirmation for external automation commands | Allow the local bridge command when appropriate; the approval watcher is a convenience layer, not a security boundary |

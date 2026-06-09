@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Added a daemon watchdog script and installer wiring so the Windows scheduled task periodically restores the Claude bridge daemon if it exits.
+
 ## 0.1.4
 
 - Fixed UTF-8 JSON reading on Windows PowerShell 5.1 so Chinese and other non-ASCII task prompts validate and can be claimed reliably.
