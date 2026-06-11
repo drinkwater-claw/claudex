@@ -25,6 +25,7 @@ foreach ($dir in @(
 
 Copy-Item -Force (Join-Path $ProjectRoot "src\powershell\*.ps1") $RuntimeBin
 Copy-Item -Force (Join-Path $ProjectRoot "src\powershell\*.psm1") $RuntimeBin
+Copy-Item -Force (Join-Path $ProjectRoot "src\powershell\*.vbs") $RuntimeBin
 Copy-Item -Force (Join-Path $ProjectRoot "docs\*.md") (Join-Path $BridgeRoot "docs")
 Copy-Item -Force (Join-Path $ProjectRoot "schemas\*.json") (Join-Path $BridgeRoot "schemas")
 Copy-Item -Force (Join-Path $ProjectRoot "examples\*.json") (Join-Path $BridgeRoot "examples")

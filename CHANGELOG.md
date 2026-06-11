@@ -4,6 +4,7 @@
 
 - Added a daemon watchdog script and installer wiring so the Windows scheduled task periodically restores the Claude bridge daemon if it exits.
 - Runs the watchdog scheduled task with a hidden, non-interactive PowerShell window to avoid interrupting fullscreen work.
+- Changed the watchdog scheduled task to launch through `wscript.exe` so it does not create a console window before PowerShell can hide itself.
 
 ## 0.1.4
 
