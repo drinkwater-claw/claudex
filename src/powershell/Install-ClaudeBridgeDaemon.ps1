@@ -15,7 +15,7 @@ Initialize-AIBridgeRoot -BridgeRoot $BridgeRoot | Out-Null
 New-Item -ItemType Directory -Force -Path (Join-Path $BridgeRoot "locks") | Out-Null
 
 $ensureScript = Join-Path $PSScriptRoot "Ensure-ClaudeBridgeDaemon.ps1"
-$arguments = "-NoProfile -ExecutionPolicy Bypass -File `"$ensureScript`" -BridgeRoot `"$BridgeRoot`" -PollSeconds $PollSeconds -TaskTimeoutSeconds $TaskTimeoutSeconds"
+$arguments = "-WindowStyle Hidden -NoProfile -NonInteractive -ExecutionPolicy Bypass -File `"$ensureScript`" -BridgeRoot `"$BridgeRoot`" -PollSeconds $PollSeconds -TaskTimeoutSeconds $TaskTimeoutSeconds"
 
 $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument $arguments
 $logonTrigger = New-ScheduledTaskTrigger -AtLogOn -User $env:USERNAME
